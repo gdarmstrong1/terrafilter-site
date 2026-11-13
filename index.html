@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="TerraFilter is a modular water treatment cell, based on horizontal levee technology, that filters effluent before it reaches freshwater or marine systems.">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>TerraFilter by Flowstate</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a calm, wide single column per tab. A thin five-part bar, echoing the cell's five media layers, is the recurring motif. */
+:root{
+  --bg:#F6F8FA; --surface:#FFFFFF; --ink:#0C2135; --muted:#51626F; --line:#D9E0E6;
+  --marsh:#0B7A6B; --on-accent:#FFFFFF; --water:#2563C9; --tint:#E7F1F3; --s2:#A7D8CF;
+  --band:#0C2135; --band-ink:#EEF3F7; --band-muted:#A8B8C6; --band-line:#263B50;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0B151E; --surface:#121F2B; --ink:#E9EEF3; --muted:#9CAAB8; --line:#25364A;
+  --marsh:#4CC7B0; --on-accent:#06201C; --water:#86AEF7; --tint:#132B33; --s2:#2C6F66;
+  --band:#060D14; --band-ink:#EEF3F7; --band-muted:#A8B8C6; --band-line:#1C2C3C;
+  color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0B151E; --surface:#121F2B; --ink:#E9EEF3; --muted:#9CAAB8; --line:#25364A;
+  --marsh:#4CC7B0; --on-accent:#06201C; --water:#86AEF7; --tint:#132B33; --s2:#2C6F66;
+  --band:#060D14; --band-ink:#EEF3F7; --band-muted:#A8B8C6; --band-line:#1C2C3C;
+  color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-stretch:112%;line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(2.5rem,6.2vw,4.6rem);font-weight:800}
+h2{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:700}
+h3{font-size:1.15rem;font-weight:700;line-height:1.25}
+p{margin:0;max-width:65ch}
+a{color:var(--marsh)}
+:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.2rem;color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:16px}
+.strata{display:flex;height:4px}
+.strata i{display:block}
+.strata i:nth-child(1){flex:1;background:var(--line)}
+.strata i:nth-child(2){flex:2;background:var(--s2)}
+.strata i:nth-child(3){flex:3;background:var(--marsh)}
+.strata i:nth-child(4){flex:1.4;background:var(--ink)}
+.strata i:nth-child(5){flex:2;background:var(--water)}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:8px 28px;flex-wrap:wrap;padding-block:12px}
+.brand{font-family:var(--display);font-stretch:118%;font-weight:800;font-size:1.25rem;color:var(--ink);text-decoration:none;margin-right:auto;display:flex;align-items:baseline;gap:8px}
+.brand small{font-family:var(--mono);font-weight:400;font-size:.7rem;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+nav{display:flex;gap:4px 22px;flex-wrap:wrap}
+nav a{color:var(--muted);text-decoration:none;font-weight:500;font-size:.95rem;padding:6px 0;border-bottom:2px solid transparent}
+nav a:hover{color:var(--ink)}
+nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--marsh)}
+
+.btn{display:inline-block;font:600 1rem var(--body);padding:13px 22px;border-radius:3px;text-decoration:none;border:1.5px solid var(--marsh);background:var(--marsh);color:var(--on-accent);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn:hover{filter:brightness(1.08)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+
+section.view>.block{padding-block:clamp(44px,7vw,84px)}
+.block+.block{border-top:1px solid var(--line)}
+.pagehead{padding-block:clamp(40px,6vw,72px) clamp(28px,4vw,44px)}
+.pagehead h1{font-size:clamp(2.1rem,5vw,3.6rem)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(24px,4vw,56px);align-items:center;padding-block:clamp(36px,6vw,72px)}
+.hero>*{min-width:0}
+@media (max-width:860px){.hero{grid-template-columns:1fr}}
+.figure{background:var(--surface);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.figure svg{display:block;width:100%;height:auto}
+.figure figcaption,.cap{font-size:.82rem;color:var(--muted);padding:10px 14px}
+figure{margin:0}
+
+/* facts */
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.facts div{padding:22px 20px 22px 0;min-width:0}
+.facts div+div{padding-left:20px;border-left:1px solid var(--line)}
+.facts b{display:block;font-family:var(--display);font-stretch:112%;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+.facts span{color:var(--muted);font-size:.93rem;display:block;margin-top:6px}
+@media (max-width:760px){.facts{grid-template-columns:1fr 1fr}.facts div{padding:18px 14px 18px 0}.facts div+div{padding-left:14px}.facts div:nth-child(3){border-left:0;padding-left:0;border-top:1px solid var(--line)}.facts div:nth-child(4){border-top:1px solid var(--line)}}
+
+/* quote band */
+.band{background:var(--band);color:var(--band-ink)}
+.band .wrap{padding-block:clamp(44px,7vw,80px)}
+blockquote{margin:0;font-family:var(--display);font-stretch:108%;font-weight:600;font-size:clamp(1.35rem,2.9vw,2.1rem);line-height:1.25;max-width:32em;text-wrap:balance}
+blockquote+p{margin-top:20px;font-family:var(--mono);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--band-muted)}
+
+.cols{display:grid;gap:28px 40px}
+.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:900px){.c4{grid-template-columns:repeat(2,minmax(0,1fr))}.c3{grid-template-columns:1fr}}
+@media (max-width:640px){.c2,.c4{grid-template-columns:1fr}}
+.cols>*{min-width:0}
+.item{border-top:3px solid var(--ink);padding-top:14px}
+.item p{color:var(--muted);font-size:.97rem;margin-top:8px}
+.item .tag{font-family:var(--mono);font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--marsh);display:block;margin-bottom:6px}
+.head{display:flex;flex-direction:column;gap:12px;margin-bottom:32px}
+ul.plain{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+ul.plain li{padding-left:20px;position:relative;max-width:62ch}
+ul.plain.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 40px}
+@media (max-width:640px){ul.plain.two{grid-template-columns:1fr}}
+ul.plain li::before{content:"";position:absolute;left:0;top:.62em;width:9px;height:9px;background:var(--marsh)}
+.note{background:var(--tint);padding:18px 20px;border-radius:3px;font-size:.95rem}
+.note p+p{margin-top:8px}
+
+/* layer explorer */
+.explore{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:900px){.explore{grid-template-columns:1fr}}
+.scroller{overflow-x:auto}
+.scroller svg{min-width:600px}
+.layers{display:flex;flex-direction:column;margin:0;padding:0;list-style:none}
+.layers button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;width:100%;padding:11px 10px;border-top:1px solid var(--line);cursor:pointer}
+.layers li:last-child button{border-bottom:1px solid var(--line)}
+.layers button:focus-visible{outline:3px solid var(--water)}
+.layers button[aria-pressed="true"]{background:var(--tint)}
+.layers .n{width:28px;height:28px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font:600 .85rem var(--mono)}
+.layers b{display:block;font-weight:600}
+.layers span.d{color:var(--muted);font-size:.92rem;display:block}
+svg .lay{transition:opacity .2s;cursor:pointer}
+svg.focus .lay:not(.on){opacity:.28}
+@keyframes flow{to{stroke-dashoffset:-36}}
+svg .flow{stroke-dasharray:14 22;animation:flow 1.6s linear infinite}
+@media (prefers-reduced-motion:reduce){svg .flow{animation:none;stroke-dasharray:none}}
+@media (max-width:640px){.hero .dl{display:none}}
+
+/* tables */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.95rem}
+th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td,tr:last-child th{border-bottom:0}
+thead th{font-family:var(--mono);font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tbody th{font-weight:600;white-space:nowrap}
+td.us,th.us{background:var(--tint)}
+thead th.us{color:var(--marsh)}
+
+/* timeline */
+.tl{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));border-top:3px solid var(--ink);margin-top:8px}
+.tl div{padding:10px 4px 0;font:500 .78rem var(--mono);color:var(--muted);border-left:1px solid var(--line);min-height:54px}
+.tl div.mark{color:var(--ink);border-left:3px solid var(--marsh)}
+.tl div.mark.end{border-left-color:var(--water)}
+.tl div b{display:block;font:600 .84rem var(--body);color:var(--ink);margin-top:4px;line-height:1.25}
+@media (max-width:720px){.tl{grid-template-columns:1fr;border-top:0;border-left:3px solid var(--ink)}.tl div{border-left:0;min-height:0;padding:6px 12px}.tl div:not(.mark){display:none}}
+
+/* pricing */
+.prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:640px){.prices{grid-template-columns:1fr}}
+.price{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:26px}
+.price .amt{font-family:var(--display);font-stretch:112%;font-weight:800;font-size:clamp(2.3rem,5vw,3.4rem);line-height:1;font-variant-numeric:tabular-nums;margin:10px 0 4px}
+.price .per{color:var(--muted);font-size:.95rem}
+.price ul{margin-top:18px}
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:26px;display:grid;gap:22px}
+.calc label{font-weight:600;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.calc input[type=range]{width:100%;accent-color:var(--marsh)}
+.out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.out{grid-template-columns:1fr}}
+.out div{border-top:3px solid var(--ink);padding-top:10px;min-width:0}
+.out b{display:block;font-family:var(--display);font-stretch:112%;font-weight:800;font-size:1.8rem;font-variant-numeric:tabular-nums;line-height:1.15}
+.out span{color:var(--muted);font-size:.9rem}
+
+/* contact */
+.email{font:400 .8rem var(--mono);overflow-wrap:anywhere;user-select:all}
+.copy{all:unset;cursor:pointer;font:500 .75rem var(--mono);color:var(--marsh);text-decoration:underline;align-self:flex-start}
+.copy:focus-visible{outline:3px solid var(--water)}
+form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+form .full{grid-column:1/-1}
+@media (max-width:640px){form{grid-template-columns:1fr}}
+form label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.92rem}
+input[type=text],input[type=email],select,textarea{font:400 1rem var(--body);padding:11px 12px;border:1px solid var(--line);border-radius:3px;background:var(--surface);color:var(--ink);width:100%}
+textarea{min-height:120px;resize:vertical}
+#draft{white-space:pre-wrap;font:400 .88rem/1.5 var(--mono);background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:16px;overflow-wrap:anywhere}
+
+.cta{display:flex;justify-content:space-between;align-items:center;gap:20px 40px;flex-wrap:wrap}
+.cta h2{max-width:20ch}
+.band .btn{background:var(--band-ink);border-color:var(--band-ink);color:var(--band)}
+.band p{color:var(--band-muted)}
+footer .wrap{padding-block:28px;display:flex;justify-content:space-between;gap:10px 30px;flex-wrap:wrap;color:var(--muted);font-size:.85rem}
+.src{font-size:.8rem;color:var(--muted);margin-top:18px;max-width:90ch}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#home">TerraFilter <small>by Flowstate</small></a>
+    <nav aria-label="Main">
+      <a href="#home" data-nav="home">Home</a>
+      <a href="#technology" data-nav="technology">How it works</a>
+      <a href="#regulations" data-nav="regulations">Why act now</a>
+      <a href="#pricing" data-nav="pricing">Pricing</a>
+      <a href="#team" data-nav="team">Contact</a>
+    </nav>
+  </div>
+  <div class="strata" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+</header>
+
+<main>
+<!-- ================= HOME ================= -->
+<section class="view" id="view-home">
+  <div class="wrap hero">
+    <div class="stack" style="gap:22px">
+      <span class="eyebrow">Modular water treatment cell</span>
+      <h1>Small footprint. Big splash.</h1>
+      <p class="lede">TerraFilter cleans effluent before it reaches a river, bay or ocean. Water passes through layers of gravel, sand, wood shavings and activated carbon, and living microbes do the work. No aeration, no chemicals, no sludge.</p>
+      <div class="row">
+        <a class="btn" href="#team">Become a pilot partner</a>
+        <a class="btn ghost" href="#technology">See how it works</a>
+      </div>
+    </div>
+    <figure class="figure">
+      <img src="img/cell-cutaway.jpg" alt="3D illustration of a TerraFilter cell set into a shoreline and cut open. Under a planted top, water passes left to right through bands of gravel, sand, wood shavings, activated carbon and a collection zone, then out through a pipe into open water." width="1600" height="1000" style="display:block;width:100%;height:auto">
+      <figcaption>One TerraFilter cell, cut open to show the treatment layers. 3D illustration, not to scale.</figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap">
+    <div class="facts">
+      <div><b>~¼ the land</b><span>of a horizontal levee, for comparable nitrogen removal</span></div>
+      <div><b>~1,600 lb</b><span>of nitrogen removed per cell each year (modeled)</span></div>
+      <div><b>10+ years</b><span>of academic study behind the horizontal levee process</span></div>
+      <div><b>1 cell at a time</b><span>Start small and add cells as your limits tighten</span></div>
+    </div>
+  </div>
+
+  <div class="wrap block">
+    <div class="head">
+      <span class="eyebrow">What it is</span>
+      <h2>A proven idea, rebuilt to fit your site</h2>
+      <p class="lede">Horizontal levees are sloped, planted embankments that filter water as it moves underground toward the shore. Researchers have studied and validated them in the field for more than a decade. They work, but they need a lot of shoreline.</p>
+      <p>TerraFilter packs the same treatment layers into a compact, sealed cell about 10 feet across and 6 feet deep. Cells sit side by side along the water's edge, so you can install as many as you need.</p>
+    </div>
+    <div class="cols c3">
+      <div class="item"><h3>Smaller</h3><p>Comparable nitrogen removal in roughly a quarter of the land a horizontal levee needs.</p></div>
+      <div class="item"><h3>Removable</h3><p>A crane lifts out one sealed module at a time when the media needs replacing. The rest keep running.</p></div>
+      <div class="item"><h3>Customizable</h3><p>We choose the media in each cell to match what is in your water and what your permit requires.</p></div>
+    </div>
+  </div>
+
+  <div class="band">
+    <div class="wrap">
+      <blockquote>“Nutrient pollution, caused by excess nitrogen and phosphorus in the air and water, is one of America’s most widespread, costly and challenging environmental problems.”</blockquote>
+      <p>U.S. EPA · National Water Program Guidance, FY 2025–2026</p>
+    </div>
+  </div>
+
+  <div class="wrap block">
+    <div class="head">
+      <span class="eyebrow">Multi-benefit</span>
+      <h2>One cell, several jobs</h2>
+      <p class="lede">Most treatment equipment does one thing. A row of TerraFilter cells treats water and protects your shoreline at once.</p>
+    </div>
+    <div class="cols c4">
+      <div class="item"><span class="tag">Effluent</span><h3>Polishes discharged water</h3><p>Fed from a treatment plant or industrial facility, the cell removes nitrogen before the water enters a freshwater or marine system.</p></div>
+      <div class="item"><span class="tag">Stormwater</span><h3>Captures surface runoff</h3><p>Dirty runoff soaks in through the planted top layer and is filtered before it reaches the ocean.</p></div>
+      <div class="item"><span class="tag">Groundwater</span><h3>Filters contaminated aquifers</h3><p>Swappable carbon media can treat contaminated groundwater, and the cell line helps hold back saltwater intrusion.</p></div>
+      <div class="item"><span class="tag">Shoreline</span><h3>Buffers the coast, hosts wildlife</h3><p>Native vegetation on top provides habitat, and the cells act as a defense against sea level rise and storm surge.</p></div>
+    </div>
+  </div>
+
+  <div class="wrap block">
+    <figure class="figure">
+      <img src="img/site-concept.jpg" alt="Aerial concept view of a wastewater treatment plant with a row of 25 square treatment cells along its shoreline, fed by treated wastewater." width="1500" height="844" style="display:block;width:100%;height:auto">
+      <figcaption>Concept rendering (AI-generated illustration): 25 TerraFilter cells along the shoreline edge of a treatment plant.</figcaption>
+    </figure>
+  </div>
+
+  <div class="band">
+    <div class="wrap cta">
+      <div class="stack">
+        <h2>Our first pilot cell goes in the ground in 2027.</h2>
+        <p>We are looking for treatment plants and dischargers who want to host a pilot and shape the design.</p>
+      </div>
+      <a class="btn" href="#team">Talk to the team</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TECHNOLOGY ================= -->
+<section class="view" id="view-technology" hidden>
+  <div class="wrap pagehead stack">
+    <span class="eyebrow">How it works</span>
+    <h1>Water goes in one side and comes out cleaner on the other.</h1>
+    <p class="lede">Each cell is a sealed, planted box set into the shoreline. Water moves sideways through a series of natural media. Each layer has one job.</p>
+  </div>
+
+  <div class="wrap block" style="padding-top:0">
+    <div class="explore">
+      <figure class="figure">
+        <div class="scroller"><div data-diagram="interactive"></div></div>
+        <figcaption>Select a layer to highlight it. Concept diagram, not to scale. The main design treats wastewater effluent for nitrogen; stormwater and groundwater inflows show the cell's other uses.</figcaption>
+      </figure>
+      <ol class="layers" id="layers">
+        <li><button type="button" data-k="1" aria-pressed="false"><span class="n">1</span><span><b>Planted top layer</b><span class="d">Soil and native plants soak up stormwater and create habitat.</span></span></button></li>
+        <li><button type="button" data-k="2" aria-pressed="false"><span class="n">2</span><span><b>Intake gravel</b><span class="d">Spreads incoming water evenly across the cell.</span></span></button></li>
+        <li><button type="button" data-k="3" aria-pressed="false"><span class="n">3</span><span><b>Sand with microbes</b><span class="d">Step one: microbes turn ammonia into nitrate.</span></span></button></li>
+        <li><button type="button" data-k="4" aria-pressed="false"><span class="n">4</span><span><b>Wood shavings</b><span class="d">Step two: microbes turn nitrate into harmless nitrogen gas.</span></span></button></li>
+        <li><button type="button" data-k="5" aria-pressed="false"><span class="n">5</span><span><b>Swappable polishing media</b><span class="d">For example, activated carbon for groundwater contaminants.</span></span></button></li>
+        <li><button type="button" data-k="6" aria-pressed="false"><span class="n">6</span><span><b>Collection zone</b><span class="d">Gathers the clean water for the outlet.</span></span></button></li>
+        <li><button type="button" data-k="7" aria-pressed="false"><span class="n">7</span><span><b>Outlet and flap valve</b><span class="d">Releases clean water, blocks tidal water from coming back in, and gives you a sampling point.</span></span></button></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="wrap block">
+    <div class="cols c2" style="align-items:center">
+      <div class="stack">
+        <span class="eyebrow">Maintenance</span>
+        <h2>Replace the media without rebuilding anything</h2>
+        <p>Treatment media wears out over time. With TerraFilter, a crane lifts one sealed module out, swaps in fresh media, and sets it back. We expect a swap about every 5 to 15 years. More contaminated water means shorter intervals.</p>
+        <p>Because the cells are separate, the others keep treating water while one is serviced.</p>
+      </div>
+      <figure class="figure">
+        <img src="img/media-swap.jpg" alt="3D illustration of a row of planted TerraFilter cells along a shoreline. A crane is lifting one sealed cell out of the ground while the others stay in place." width="1600" height="1000" style="display:block;width:100%;height:auto">
+        <figcaption>A media swap: one cell is lifted out while its neighbors keep working. 3D illustration, not to scale.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="wrap block">
+    <div class="head">
+      <span class="eyebrow">Built to be simple</span>
+      <h2>Low effort to own and run</h2>
+    </div>
+    <ul class="plain two">
+      <li><b>Nature-based.</b> Microbes and plants do the treatment.</li>
+      <li><b>Small footprint.</b> About a quarter of the land of a horizontal levee.</li>
+      <li><b>Low energy demand.</b> No blowers pushing air into tanks.</li>
+      <li><b>Minimal long-term upkeep.</b> No chemicals to dose and no sludge to haul.</li>
+      <li><b>Completely customizable.</b> Media and cell count match your water.</li>
+      <li><b>Replaceable media.</b> Swap it when it is spent or when your needs change.</li>
+    </ul>
+  </div>
+
+  <div class="wrap block">
+    <div class="head">
+      <span class="eyebrow">Who it is for</span>
+      <h2>If you discharge water, TerraFilter can sit at the end of your pipe</h2>
+    </div>
+    <div class="cols c2">
+      <div class="item"><h3>Wastewater treatment plants</h3><p>Add nitrogen removal at the shoreline edge of your plant instead of rebuilding the treatment train inside it. Start with a few cells and expand as nutrient limits tighten.</p></div>
+      <div class="item"><h3>Industrial dischargers</h3><p>Polish process or cooling water before it leaves your site. The polishing media is chosen for the contaminants in your discharge.</p></div>
+      <div class="item"><h3>Stormwater and waterfront owners</h3><p>Ports, cities and campuses can capture dirty surface runoff through the planted top and filter it before it reaches open water.</p></div>
+      <div class="item"><h3>Sites with contaminated groundwater</h3><p>A row of cells with carbon media can intercept and filter a contaminated aquifer on its way to the shore, and help keep saltwater from moving inland.</p></div>
+    </div>
+  </div>
+
+  <div class="wrap block">
+    <div class="head">
+      <span class="eyebrow">How we compare</span>
+      <h2>Your options for removing nitrogen</h2>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>Conventional plant upgrade</th><th>Horizontal levee</th><th class="us">TerraFilter</th></tr></thead>
+        <tbody>
+          <tr><th>Land</th><td>Inside the existing plant</td><td>About 0.09 acres per kg of nitrogen per day</td><td class="us">About 0.025 acres per kg of nitrogen per day</td></tr>
+          <tr><th>Energy</th><td>High. Blowers pump air into tanks.</td><td>Very low</td><td class="us">Low</td></tr>
+          <tr><th>Commitment</th><td>One large project</td><td>One large project</td><td class="us">Add cells over time</td></tr>
+          <tr><th>Extra benefits</th><td>Water quality only</td><td>Habitat, flood protection</td><td class="us">Habitat, flood protection, stormwater and groundwater filtration</td></tr>
+          <tr><th>Track record</th><td>Widely used</td><td>Demonstrated at Oro Loma Sanitary District</td><td class="us">Same treatment process as the horizontal levee. First pilot cell planned for 2027.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REGULATIONS ================= -->
+<section class="view" id="view-regulations" hidden>
+  <div class="wrap pagehead stack">
+    <span class="eyebrow">Why act now</span>
+    <h1>Nutrient limits are tightening, and upgrades take years.</h1>
+    <p class="lede">Regulators are asking dischargers to remove far more nitrogen than their plants were built for. The deadlines are close enough that planning has to start now.</p>
+  </div>
+
+  <div class="wrap block" style="padding-top:0">
+    <div class="cols c3">
+      <div class="item"><span class="tag">California</span><h3>40% less nutrient load by 2034</h3><p>San Francisco Bay dischargers are required to cut their nutrient load by 40% by 2034. There are about 40 wastewater treatment plants in the Bay Area alone, and the upgrades are estimated at $11 billion.</p></div>
+      <div class="item"><span class="tag">Nationwide</span><h3>Permit risk is rising everywhere</h3><p>Harmful algal blooms and water reuse requirements are pushing nutrient rules tighter across the country. Each permit renewal is likely to ask for more.</p></div>
+      <div class="item"><span class="tag">Urgency</span><h3>Compliance takes time</h3><p>Design, permitting and construction take years. Dischargers who start planning now can avoid heavy fines over the next 5 to 10 years.</p></div>
+    </div>
+
+    <div style="margin-top:48px" class="stack">
+      <h3>The window for Bay Area dischargers</h3>
+      <div class="tl" role="img" aria-label="Timeline from 2026 to 2034. 2026: start planning. 2027: first TerraFilter pilot cell. 2034: 40 percent nutrient reduction required.">
+        <div class="mark">2026<b>Start planning</b></div>
+        <div class="mark">2027<b>First TerraFilter pilot cell</b></div>
+        <div>2028</div><div>2029</div><div>2030</div><div>2031</div><div>2032</div><div>2033</div>
+        <div class="mark end">2034<b>40% reduction required</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="band">
+    <div class="wrap">
+      <blockquote>“Nutrient pollution, caused by excess nitrogen and phosphorus in the air and water, is one of America’s most widespread, costly and challenging environmental problems.”</blockquote>
+      <p>U.S. EPA · National Water Program Guidance, FY 2025–2026</p>
+    </div>
+  </div>
+
+  <div class="wrap block">
+    <div class="head">
+      <span class="eyebrow">Why regulators care</span>
+      <h2>What excess nitrogen does downstream</h2>
+      <p>Too much nitrogen makes algae grow faster than ecosystems can handle. That uses up the oxygen fish need and can produce toxins that make people sick.</p>
+    </div>
+    <div class="cols c3">
+      <div class="item"><span class="tag">Human health</span><h3>1 in 5 Americans</h3><p>rely on drinking water with elevated nitrogen. Effects include rashes, stomach and liver illness, respiratory and neurological problems, and blue baby syndrome.</p></div>
+      <div class="item"><span class="tag">Environment</span><h3>165 dead zones worldwide</h3><p>Algal blooms strip oxygen from the water, release toxins and build up in the food chain. EPA surveys rate nearly half of U.S. rivers, streams and lakes poor for nitrogen or phosphorus.</p></div>
+      <div class="item"><span class="tag">Economy</span><h3>About $1 billion a year</h3><p>in lost tourism alone. Waterfront property values can fall by up to 25%, and commercial fishing loses tens of millions each year.</p></div>
+    </div>
+    <p class="src">Sources: U.S. EPA, “Nutrient Pollution: The Effects” and National Water Program Guidance FY 2025–2026; San Francisco Bay Regional Water Quality Control Board (2024).</p>
+  </div>
+
+  <div class="wrap block">
+    <div class="cols c2">
+      <div class="stack">
+        <span class="eyebrow">A lower-risk first step</span>
+        <h2>You do not have to commit to a nine-figure project to get started</h2>
+        <p>Conventional nitrogen upgrades at Bay Area plants run into the hundreds of millions of dollars. Palo Alto's upgrade cost $193 million. Union Sanitary District's nutrient project is $385 million.</p>
+        <p>A 25-cell TerraFilter installation is about $4.25 million. You can begin with fewer cells and add more as your limits tighten.</p>
+        <div class="row"><a class="btn" href="#pricing">See pricing</a><a class="btn ghost" href="#team">Ask about a pilot</a></div>
+      </div>
+      <div class="note stack">
+        <h3>What starting now looks like</h3>
+        <ul class="plain">
+          <li>Share your discharge data and permit limits with us.</li>
+          <li>We size a row of cells for your shoreline and your targets.</li>
+          <li>Host a pilot cell and collect your own performance data before you scale.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="src">Sources: Mountain View Voice (March 2024); EPA WIFIA fact sheet, Union Sanitary District (January 2022).</p>
+  </div>
+</section>
+
+<!-- ================= PRICING ================= -->
+<section class="view" id="view-pricing" hidden>
+  <div class="wrap pagehead stack">
+    <span class="eyebrow">Pricing</span>
+    <h1>Two numbers: one per cell, one per year.</h1>
+    <p class="lede">You pay once for each cell and a flat yearly fee to keep it running. Buy the number of cells you need today and add more later.</p>
+  </div>
+
+  <div class="wrap block" style="padding-top:0">
+    <div class="prices">
+      <div class="price">
+        <span class="eyebrow">Each cell, one time</span>
+        <div class="amt">$170,000</div>
+        <div class="per">per installed cell</div>
+        <ul class="plain">
+          <li>Design and engineering for your shoreline</li>
+          <li>Excavation, liner, pipes, pump and sensor</li>
+          <li>Treatment media and native plants</li>
+        </ul>
+      </div>
+      <div class="price">
+        <span class="eyebrow">Service, every year</span>
+        <div class="amt">$10,000</div>
+        <div class="per">per cell, per year</div>
+        <ul class="plain">
+          <li>Inspections and plant care</li>
+          <li>Water sampling and lab testing</li>
+          <li>Media replacement about every 10 years</li>
+        </ul>
+      </div>
+    </div>
+    <p class="src">Estimated pricing ahead of our 2027 pilot. Final pricing depends on your site, your water and the media you need.</p>
+  </div>
+
+  <div class="wrap block">
+    <div class="head">
+      <span class="eyebrow">Estimate your project</span>
+      <h2>How many cells do you need?</h2>
+      <p>A typical treatment plant installs 20 to 25 cells at full scale. Move the slider to see the cost and the nitrogen removed.</p>
+    </div>
+    <div class="calc">
+      <div>
+        <label for="cells">Number of cells <output id="cellsOut" for="cells">25</output></label>
+        <input type="range" id="cells" min="1" max="50" value="25" step="1">
+      </div>
+      <div class="out" aria-live="polite">
+        <div><b id="oUp">$4,250,000</b><span>one-time cost</span></div>
+        <div><b id="oYr">$250,000</b><span>service per year</span></div>
+        <div><b id="oN">40,000 lb</b><span>nitrogen removed per year (modeled)</span></div>
+      </div>
+    </div>
+    <p class="src">Nitrogen removal is a modeled estimate of about 1,600 lb per cell per year, to be confirmed by pilot data.</p>
+  </div>
+
+  <div class="wrap block">
+    <div class="head">
+      <span class="eyebrow">Value</span>
+      <h2>About $13 per pound of nitrogen removed</h2>
+      <p>That figure includes operations. It assumes a 30-year cell life with the purchase financed at 5% interest.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>Conventional plant upgrade</th><th>Horizontal levee</th><th class="us">TerraFilter</th></tr></thead>
+        <tbody>
+          <tr><th>Cost per lb of nitrogen</th><td>$11 to $14, before land costs</td><td>About $8, capital only</td><td class="us">About $13, including operations</td></tr>
+          <tr><th>Typical project size</th><td>$193M (Palo Alto)<br>$385M (Union Sanitary)</td><td>$45M to $55M</td><td class="us">$4.25M for 25 cells</td></tr>
+          <tr><th>Land needed</th><td>Inside the existing plant</td><td>About 4× the land of TerraFilter</td><td class="us">About ¼ of a horizontal levee</td></tr>
+          <tr><th>How you buy it</th><td>One large project</td><td>One large project</td><td class="us">Cell by cell</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">Sources: BACWA 2018 Nutrient Reduction Study; Mountain View Voice (2024); EPA WIFIA fact sheet, Union Sanitary District; WateReuse/BACWA workshop (April 2025). Project sizes differ in treatment capacity and are shown for scale.</p>
+  </div>
+
+  <div class="band">
+    <div class="wrap cta">
+      <div class="stack"><h2>Want a number for your site?</h2><p>Tell us about your discharge and we will size a row of cells for you.</p></div>
+      <a class="btn" href="#team">Request an estimate</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TEAM ================= -->
+<section class="view" id="view-team" hidden>
+  <div class="wrap pagehead stack">
+    <span class="eyebrow">Contact</span>
+    <h1>Talk to the people building TerraFilter.</h1>
+    <p class="lede">Flowstate is a team of engineers and analysts from UC Berkeley. We are making room for better water management, because the Earth does not have any room to spare.</p>
+  </div>
+
+  <div class="wrap block" style="padding-top:0">
+    <div class="cols c2">
+      <div class="stack">
+        <span class="eyebrow">Get in touch</span>
+        <h2>Tell us about your water</h2>
+        <p>Fill in a few details and we will turn them into an email you can send to the team. We are especially interested in hearing from facilities that could host a pilot cell in 2027.</p>
+        <div class="note stack">
+          <p><b>Email the team</b></p>
+          <span class="email" id="allEmails">garmstrong@berkeley.edu, tanvi_munjeti@berkeley.edu, suryarajesh@berkeley.edu, preetirao@berkeley.edu, skohli@berkeley.edu</span>
+          <button class="copy" type="button" data-copy="garmstrong@berkeley.edu, tanvi_munjeti@berkeley.edu, suryarajesh@berkeley.edu, preetirao@berkeley.edu, skohli@berkeley.edu">Copy all addresses</button>
+        </div>
+      </div>
+      <div class="stack">
+        <form id="inq" novalidate>
+          <label>Your name<input type="text" id="fName" autocomplete="name"></label>
+          <label>Organization<input type="text" id="fOrg" autocomplete="organization"></label>
+          <label>Facility type
+            <select id="fType">
+              <option>Wastewater treatment plant</option>
+              <option>Industrial discharger</option>
+              <option>Stormwater or waterfront owner</option>
+              <option>Groundwater remediation site</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label>I am interested in
+            <select id="fInt">
+              <option>Hosting a pilot cell</option>
+              <option>A cost estimate for my site</option>
+              <option>Learning more about the technology</option>
+            </select>
+          </label>
+          <label class="full">Anything else we should know<textarea id="fMsg" placeholder="For example: daily discharge volume, current nitrogen limits, available shoreline"></textarea></label>
+          <div class="full row"><button class="btn" type="submit">Write my email</button></div>
+        </form>
+        <div id="draftBox" class="stack" hidden>
+          <div id="draft"></div>
+          <div class="row" style="align-items:center"><button class="btn ghost" type="button" id="copyDraft">Copy email text</button><span class="cap" id="draftMsg" style="padding:0">Paste it into your email app and send it to the addresses listed here.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="strata" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="wrap"><span>TerraFilter by Flowstate · Berkeley, California</span><span>Performance and pricing figures are modeled estimates pending pilot validation.</span></div>
+</footer>
+
+<script>
+(function(){
+  /* ---------- cross-section diagram (one source, drawn into hero and explorer) ---------- */
+  function plants(){var s='';for(var x=262;x<=700;x+=31){s+='<path d="M'+x+' 110 l-9 -30 M'+x+' 110 l0 -36 M'+x+' 110 l9 -30" stroke="#3F8F58" stroke-width="3.2" stroke-linecap="round" fill="none"/>';}return s;}
+  function dots(x0,x1,y0,y1,step,r,fill,seed){var s='',i=0;for(var y=y0+step/2;y<y1;y+=step){for(var x=x0+step/2+((i%2)*step/2);x<x1-r;x+=step){s+='<circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="'+r+'" fill="'+fill+'"/>';}i++;}return s;}
+  function chips(){var s='',n=0;for(var y=182;y<400;y+=17){for(var x=398+(n%2)*9;x<524;x+=22){var a=((x*7+y*13)%120)-60;s+='<rect x="'+x+'" y="'+y+'" width="13" height="3.4" rx="1.5" fill="#7C5636" transform="rotate('+a+' '+(x+6)+' '+(y+2)+')"/>';}n++;}return s;}
+  function badge(n,x,y){return '<g><circle cx="'+x+'" cy="'+y+'" r="15" fill="#FFFFFF" stroke="#132B3A" stroke-width="2.5"/><text x="'+x+'" y="'+(y+5.5)+'" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="16" font-weight="600" fill="#132B3A">'+n+'</text></g>';}
+  var T='font-family="Public Sans,system-ui,sans-serif"';
+  var svg='<svg viewBox="0 0 960 470" role="img" aria-label="Cross-section of a TerraFilter cell. Water enters on the left, flows sideways through gravel, sand, wood shavings and polishing media, and leaves through an outlet with a flap valve on the right. A planted top layer takes in stormwater.">'
+   +'<rect x="0" y="0" width="960" height="470" fill="#EAF1F2"/>'
+   +'<rect x="0" y="150" width="250" height="60" fill="#B9A886"/><rect x="0" y="210" width="250" height="160" fill="#E6D9B6"/>'
+   +'<rect x="710" y="160" width="250" height="210" fill="#BFD4F2"/><path d="M710 160 H960" stroke="#3B6FD6" stroke-width="2.5"/>'
+   +'<path d="M740 215 q14 -9 28 0 t28 0 t28 0 t28 0 t28 0 t28 0 t28 0 M740 255 q14 -9 28 0 t28 0 t28 0 t28 0 t28 0 t28 0 t28 0" fill="none" stroke="#8FB0E6" stroke-width="2"/>'
+   +'<rect x="0" y="370" width="960" height="100" fill="#8A8377"/>'
+   /* groundwater plume */
+   +'<g class="dl"><ellipse cx="118" cy="300" rx="78" ry="42" fill="#B79BC4" opacity=".55"/><path d="M196 290 H240 M196 318 H240" stroke="#6A3F92" stroke-width="3.2" stroke-dasharray="8 6" fill="none"/><path d="M238 283 l12 7 -12 7z M238 311 l12 7 -12 7z" fill="#6A3F92"/></g>'
+   /* cell */
+   +plants()
+   +'<g class="lay" data-k="1"><rect x="250" y="110" width="460" height="62" fill="#66513A"/></g>'
+   +'<g class="lay" data-k="2"><rect x="250" y="172" width="52" height="238" fill="#C3C8CB"/>'+dots(250,304,172,410,15,4.2,"#9BA1A6")+'</g>'
+   +'<g class="lay" data-k="3"><rect x="302" y="172" width="90" height="238" fill="#E4D5A4"/>'+dots(302,394,172,410,11,1.3,"#BFA96A")+'</g>'
+   +'<g class="lay" data-k="4"><rect x="392" y="172" width="145" height="238" fill="#A0744D"/>'+chips()+'</g>'
+   +'<g class="lay" data-k="5"><rect x="537" y="172" width="66" height="238" fill="#3C4044"/>'+dots(537,605,172,410,9,1.5,"#15181A")+'</g>'
+   +'<g class="lay" data-k="6"><rect x="603" y="172" width="107" height="238" fill="#DCE6F5"/>'+dots(603,712,172,410,17,3.2,"#B7C6DE")+'<rect x="660" y="190" width="14" height="204" rx="7" fill="#3B6FD6"/></g>'
+   +'<rect x="250" y="110" width="460" height="300" fill="none" stroke="#132B3A" stroke-width="5"/>'
+   +'<rect x="258" y="100" width="24" height="12" rx="2" fill="#132B3A"/><rect x="678" y="100" width="24" height="12" rx="2" fill="#132B3A"/>'
+   /* inflows */
+   +'<path d="M0 232 H244" stroke="#3B6FD6" stroke-width="16" stroke-linecap="butt"/><path d="M236 221 l16 11 -16 11z" fill="#3B6FD6"/>'
+   +'<path d="M60 96 H236" stroke="#2F8F7C" stroke-width="3.5"/><path d="M234 89 l13 7 -13 7z" fill="#2F8F7C"/>'
+   +'<path d="M286 116 V158 M326 116 V158" stroke="#8FD3C4" stroke-width="3"/><path d="M280 156 l6 10 6 -10z M320 156 l6 10 6 -10z" fill="#8FD3C4"/>'
+   /* flow */
+   +'<path class="flow" d="M262 262 H646 M262 318 H646 M262 374 H646" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round"/>'
+   +'<path d="M642 254 l14 8 -14 8z M642 310 l14 8 -14 8z M642 366 l14 8 -14 8z" fill="#FFFFFF"/>'
+   /* outlet */
+   +'<g class="lay" data-k="7"><path d="M672 318 H770 M800 318 H840" stroke="#3B6FD6" stroke-width="13"/><path d="M836 303 l24 15 -24 15z" fill="#3B6FD6"/><rect x="768" y="298" width="34" height="40" rx="5" fill="#F3F6F8" stroke="#132B3A" stroke-width="3"/><path d="M785 307 V329" stroke="#132B3A" stroke-width="3"/></g>'
+   +badge(1,678,141)+badge(2,276,196)+badge(3,347,196)+badge(4,464,196)+badge(5,570,196)+badge(6,634,196)+badge(7,785,276)
+   /* labels */
+   +'<g class="dl" '+T+' font-weight="600">'
+   +'<text x="60" y="84" font-size="17" fill="#1F7565">Stormwater runoff</text>'
+   +'<text x="12" y="204" font-size="16" fill="#132B3A">Effluent from your facility</text>'
+   +'<text x="12" y="398" font-size="15" fill="#FFFFFF">Contaminated groundwater</text><text x="12" y="417" font-size="13" font-weight="400" fill="#F0ECE4">(remediation version)</text>'
+   +'<text x="948" y="150" font-size="16" text-anchor="end" fill="#2A56B5">Open water, high tide</text>'
+   +'<text x="948" y="398" font-size="15" text-anchor="end" fill="#FFFFFF">Clean water out</text><text x="948" y="417" font-size="13" font-weight="400" text-anchor="end" fill="#F0ECE4">Tidal water stays out</text>'
+   +'<text x="480" y="440" font-size="14" text-anchor="middle" fill="#FFFFFF">About 6 ft deep, keyed into the shoreline for stability</text>'
+   +'<path d="M254 44 H706 M254 44 l12 -7 M254 44 l12 7 M706 44 l-12 -7 M706 44 l-12 7" stroke="#132B3A" stroke-width="2.2" fill="none"/>'
+   +'<text x="480" y="30" font-size="17" text-anchor="middle" fill="#132B3A">10 ft (3 m) · water flows across</text>'
+   +'</g></svg>';
+  document.querySelectorAll('[data-diagram]').forEach(function(el){el.innerHTML=svg;});
+
+  /* layer explorer */
+  var ex=document.querySelector('[data-diagram="interactive"] svg'), btns=document.querySelectorAll('#layers button'), cur=null;
+  function pick(k){
+    cur=(cur===k)?null:k;
+    ex.classList.toggle('focus',cur!==null);
+    ex.querySelectorAll('.lay').forEach(function(g){g.classList.toggle('on',g.getAttribute('data-k')===cur);});
+    btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-k')===cur));});
+  }
+  btns.forEach(function(b){b.addEventListener('click',function(){pick(b.getAttribute('data-k'));});});
+  ex.querySelectorAll('.lay').forEach(function(g){g.addEventListener('click',function(){pick(g.getAttribute('data-k'));});});
+
+  /* ---------- tabs ---------- */
+  var views=['home','technology','regulations','pricing','team'];
+  function route(){
+    var h=(location.hash||'').replace('#','');
+    var v=views.indexOf(h)>-1?h:'home';
+    views.forEach(function(n){document.getElementById('view-'+n).hidden=(n!==v);});
+    document.querySelectorAll('[data-nav]').forEach(function(a){
+      if(a.getAttribute('data-nav')===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+    });
+    window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',route); route();
+
+  /* ---------- pricing estimate ---------- */
+  var cells=document.getElementById('cells');
+  function usd(n){return '$'+n.toLocaleString('en-US');}
+  function calc(){
+    var n=+cells.value;
+    document.getElementById('cellsOut').textContent=n+(n===1?' cell':' cells');
+    document.getElementById('oUp').textContent=usd(n*170000);
+    document.getElementById('oYr').textContent=usd(n*10000);
+    document.getElementById('oN').textContent=(n*1600).toLocaleString('en-US')+' lb';
+  }
+  cells.addEventListener('input',calc); calc();
+
+  /* ---------- copy helpers ---------- */
+  function copy(text,btn,done){
+    var orig=btn.textContent;
+    function ok(){btn.textContent=done||'Copied';setTimeout(function(){btn.textContent=orig;},1800);}
+    function fallback(){btn.textContent='Select the text to copy';setTimeout(function(){btn.textContent=orig;},2500);}
+    try{navigator.clipboard.writeText(text).then(ok,fallback);}catch(e){fallback();}
+  }
+  document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){copy(b.getAttribute('data-copy'),b);});});
+
+  /* ---------- inquiry draft ---------- */
+  var form=document.getElementById('inq');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var v=function(id){return document.getElementById(id).value.trim();};
+    var lines=['Subject: TerraFilter inquiry'+(v('fOrg')?' from '+v('fOrg'):''),'','Hello Flowstate team,','',
+      'I am '+(v('fName')||'[your name]')+(v('fOrg')?' with '+v('fOrg'):'')+'.',
+      'Facility type: '+v('fType'),'Interested in: '+v('fInt')];
+    if(v('fMsg')){lines.push('',v('fMsg'));}
+    lines.push('','Thank you,',v('fName')||'[your name]');
+    document.getElementById('draft').textContent=lines.join('\n');
+    document.getElementById('draftBox').hidden=false;
+  });
+  document.getElementById('copyDraft').addEventListener('click',function(){copy(document.getElementById('draft').textContent,this,'Copied');});
+})();
+</script>
+</body>
+</html>
